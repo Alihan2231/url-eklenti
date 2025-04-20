@@ -1,0 +1,320 @@
+/* Vangarde Music tasarımına benzer stil dosyası - ViorsLinkScan için */
+
+:root {
+    --primary-color: #000;
+    --secondary-color: #fff;
+    --accent-color: #c1a255; /* Vangarde altın rengi */
+    --background-color: #000;
+    --text-color: #fff;
+    --card-bg: #0a0a0a;
+    --border-color: #333;
+    --success-color: #4CAF50;
+    --danger-color: #f44336;
+    --warning-color: #ff9800;
+    --header-height: 70px;
+}
+
+body:before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(25, 25, 25, 0.5) 0%, rgba(0, 0, 0, 0.7) 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    width: 420px;
+    height: 550px;
+    max-height: 550px;
+    overflow-y: auto;
+}
+
+.extension-container {
+    padding: 16px;
+    height: 100%;
+}
+
+/* Header - Vangarde stilinde */
+header {
+    background-color: var(--primary-color);
+    border-radius: 0;
+    padding: 15px 16px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--accent-color);
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+    text-transform: uppercase;
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
+/* Scanner Form - Vangarde stilinde */
+.scan-form-container {
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 0;
+    padding: 2rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--accent-color);
+}
+
+h4 {
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(193, 162, 85, 0.3);
+    padding-bottom: 10px;
+}
+
+.form-control {
+    background-color: #000;
+    border: 1px solid var(--accent-color);
+    color: #fff;
+    padding: 1rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border-radius: 0;
+}
+
+.form-control:focus {
+    background-color: #000;
+    border-color: var(--accent-color);
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(193, 162, 85, 0.25);
+}
+
+.btn-scanner {
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    border-radius: 0;
+}
+
+.btn-scanner:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+    z-index: -1;
+}
+
+.btn-scanner:hover:before {
+    left: 100%;
+}
+
+.btn-scanner:hover {
+    background-color: #d4b768;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(193, 162, 85, 0.3);
+    color: #000;
+}
+
+.btn-outline-light {
+    border-radius: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Result Card - Vangarde stilinde */
+.result-card, .history-card, .settings-card {
+    background-color: var(--card-bg);
+    border-radius: 0;
+    padding: 2rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--accent-color);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.text-safe {
+    color: var(--success-color);
+}
+
+.text-threat {
+    color: var(--danger-color);
+}
+
+.url-display {
+    word-break: break-all;
+    font-family: monospace;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0.75rem;
+    border-radius: 0;
+    border-left: 2px solid var(--accent-color);
+    font-size: 0.9rem;
+}
+
+/* Loading Animation - Vangarde stilinde */
+.spinner-container {
+    margin-top: 1.5rem;
+}
+
+.spinner-border {
+    color: var(--accent-color) !important;
+}
+
+.loading-text {
+    font-weight: 300;
+    letter-spacing: 2px;
+    margin-top: 0.75rem;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+/* History - Vangarde stilinde */
+.history-card .card-header, .settings-card .card-header {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-bottom: 1px solid var(--accent-color);
+    border-radius: 0;
+    padding: 1rem 1.5rem;
+}
+
+.history-item {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 0;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(193, 162, 85, 0.5);
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-color: var(--accent-color);
+}
+
+.badge {
+    border-radius: 0;
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+}
+
+.badge.bg-success {
+    background-color: var(--success-color) !important;
+}
+
+.badge.bg-danger {
+    background-color: var(--danger-color) !important;
+}
+
+.badge.rounded-pill {
+    border-radius: 0 !important;
+}
+
+/* Threats - Vangarde stilinde */
+.threat-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: rgba(244, 67, 54, 0.1);
+    border-radius: 0;
+    border-left: 2px solid var(--danger-color);
+}
+
+.threat-icon {
+    margin-right: 1rem;
+    color: var(--danger-color);
+    font-size: 1.5rem;
+}
+
+.threat-content h5 {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: var(--danger-color);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.threat-content p {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+/* Toast - Vangarde stilinde */
+.toast {
+    background-color: var(--card-bg);
+    border: 1px solid var(--accent-color);
+    color: var(--text-color);
+    border-radius: 0;
+}
+
+.toast-header {
+    background-color: var(--primary-color);
+    color: var(--accent-color);
+    border-radius: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Settings - Vangarde stilinde */
+.form-label {
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--accent-color);
+}
+
+.form-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.75rem;
+    font-style: italic;
+}
+
+.form-check-label {
+    font-size: 0.85rem;
+}
