@@ -134,12 +134,31 @@ function scanUrl(url) {
     console.log('Tarama başlatılıyor:', url);
     
     // Basic URL validation
-    if (!url || !(url.startsWith('http://') || url.startsWith('https://'))) {
-        showToast('Geçersiz URL', 'Lütfen geçerli bir URL girin (http:// veya https:// ile başlamalı)', 'error');
+    if (!url) {
+        showToast('URL Eksik', 'Lütfen bir URL girin.', 'error');
         document.getElementById('spinner').style.display = 'none';
         document.getElementById('scan-button').disabled = false;
         document.getElementById('scan-current-button').disabled = false;
         return;
+    }
+    
+    // URL formatını kontrol et - geçerli bir URL olmalı
+    try {
+        new URL(url);
+    } catch (e) {
+        // Geçerli bir URL değil, http:// ile deneyelim
+        try {
+            url = 'http://' + url;
+            new URL(url); // Geçerli mi diye kontrol et
+            document.getElementById('url-input').value = url;
+        } catch (e2) {
+            // Hala geçerli değil
+            showToast('Geçersiz URL', 'Lütfen geçerli bir URL formatı girin (örn: example.com).', 'error');
+            document.getElementById('spinner').style.display = 'none';
+            document.getElementById('scan-button').disabled = false;
+            document.getElementById('scan-current-button').disabled = false;
+            return;
+        }
     }
     
     // Show spinner
@@ -188,12 +207,17 @@ function scanUrl(url) {
     console.log('Gönderilen veri:', JSON.stringify(payload));
 
     // Make API request - Ortam değişkeni değil, kullanıcının girdiği API anahtarı
+    // API isteği için timeout ayarla - 10 saniye
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 saniye timeout
+    
     fetch(`https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${apiKey}`, {
         method: 'POST',
         body: JSON.stringify(payload),
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        signal: controller.signal
     })
     .then(response => {
         console.log('API yanıt durumu:', response.status);
@@ -204,6 +228,9 @@ function scanUrl(url) {
     })
     .then(data => {
         console.log('API yanıtı:', JSON.stringify(data));
+        
+        // Timeout temizle
+        clearTimeout(timeoutId);
         
         // Process API response
         const isSafe = !data.matches || data.matches.length === 0;
@@ -238,31 +265,26 @@ function scanUrl(url) {
     .catch(error => {
         console.error('Error checking URL:', error);
         
-        // Sonucu görmek için, API başarısız olsa bile güvenli kabul edelim (TEST AMAÇLI!)
-        // NOT: Bu sadece test amaçlıdır, gerçek kullanımda bu kod kaldırılmalıdır
-        console.log('Hata oluştu ama test amaçlı olarak güvenli kabul ediyoruz');
+        // Timeout'ı temizle
+        clearTimeout(timeoutId);
         
-        const fallbackResult = {
-            id: generateId(),
-            url: url,
-            is_safe: true,  // Test için güvenli kabul ediyoruz
-            threat_types: [],
-            timestamp: new Date().toISOString(),
-            raw_result: {note: "API hatası oluştu ama test amaçlı güvenli kabul edildi"}
-        };
-        
-        // Geçici sonucu göster
-        saveToHistory(fallbackResult);
-        showResult(fallbackResult);
-        
-        // Check if it's a timeout error
-        if (error.name === 'TimeoutError' || error.name === 'AbortError') {
-            showToast('Bilgi', 'API yanıt vermedi, URL test amaçlı güvenli kabul edildi. Not: Bu sadece bir test durumudur.', 'info');
+        // Hata türüne göre uygun mesaj göster
+        if (error.name === 'AbortError') {
+            // Bu bir timeout hatası
+            console.log('API isteği zaman aşımına uğradı');
+            showToast('Zaman Aşımı', 'URL taraması zaman aşımına uğradı. API anahtarınızı kontrol edin veya tekrar deneyin.', 'error');
         } else if (error.message.includes('API')) {
-            showToast('Bilgi', 'API hatası: Test amaçlı güvenli kabul edildi. Not: Bu sadece bir test durumudur.', 'info');
+            console.log('API hatası oluştu');
+            showToast('API Hatası', 'Google Safe Browsing API hatası: API anahtarınızı kontrol edin.', 'error');
         } else {
-            showToast('Bilgi', `Tarama test amaçlı tamamlandı. Gerçek bir sonuç değildir.`, 'info');
+            console.log('Bilinmeyen hata oluştu');
+            showToast('Hata', `URL kontrol edilemedi: ${error.message}`, 'error');
         }
+        
+        // Spinner'ı gizle ve butonları aktif et
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('scan-button').disabled = false;
+        document.getElementById('scan-current-button').disabled = false;
         
         console.log('API hatası detayı:', error);
     });
