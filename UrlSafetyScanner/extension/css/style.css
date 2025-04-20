@@ -1,0 +1,214 @@
+/* ViorsLinkScan - URL Security Scanner Extension */
+
+:root {
+    --primary-color: #000;
+    --secondary-color: #fff;
+    --accent-color: #ef3340;
+    --background-color: #1a1a1a;
+    --text-color: #f5f5f5;
+    --card-bg: #121212;
+    --border-color: #333;
+    --success-color: #4CAF50;
+    --danger-color: #f44336;
+    --warning-color: #ff9800;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    width: 420px;
+    height: 550px;
+    max-height: 550px;
+    overflow-y: auto;
+}
+
+.extension-container {
+    padding: 16px;
+    height: 100%;
+}
+
+/* Header */
+header {
+    background-color: var(--primary-color);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+    color: var(--accent-color);
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
+/* Scanner Form */
+.scan-form-container {
+    background-color: rgba(18, 18, 18, 0.9);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+}
+
+.form-control {
+    background-color: #000;
+    border: 2px solid #333;
+    color: #fff;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background-color: #000;
+    border-color: var(--accent-color);
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(239, 51, 64, 0.25);
+}
+
+.btn-scanner {
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-scanner:hover {
+    background-color: #d12130;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(239, 51, 64, 0.3);
+    color: #fff;
+}
+
+/* Result Card */
+.result-card, .history-card, .settings-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.text-safe {
+    color: var(--success-color);
+}
+
+.text-threat {
+    color: var(--danger-color);
+}
+
+.url-display {
+    word-break: break-all;
+    font-family: monospace;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0.75rem;
+    border-radius: 4px;
+    border-left: 3px solid var(--accent-color);
+    font-size: 0.9rem;
+}
+
+/* Loading Animation */
+.spinner-container {
+    margin-top: 1rem;
+}
+
+.loading-text {
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 0.75rem;
+    color: var(--accent-color);
+}
+
+/* History */
+.history-card .card-header, .settings-card .card-header {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 8px 8px 0 0;
+}
+
+.history-item {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.history-chart-container {
+    height: 150px;
+    margin-bottom: 1rem;
+}
+
+/* Threats */
+.threat-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background-color: rgba(244, 67, 54, 0.1);
+    border-radius: 6px;
+    border-left: 3px solid var(--danger-color);
+}
+
+.threat-icon {
+    margin-right: 1rem;
+    color: var(--danger-color);
+    font-size: 1.5rem;
+}
+
+.threat-content h5 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: var(--danger-color);
+}
+
+.threat-content p {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+/* Toast */
+.toast {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.toast-header {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
+}
