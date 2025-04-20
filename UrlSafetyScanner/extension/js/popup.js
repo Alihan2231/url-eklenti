@@ -131,6 +131,17 @@ function scanUrl(url) {
         return;
     }
     
+    console.log('Tarama başlatılıyor:', url);
+    
+    // Basic URL validation
+    if (!url || !(url.startsWith('http://') || url.startsWith('https://'))) {
+        showToast('Geçersiz URL', 'Lütfen geçerli bir URL girin (http:// veya https:// ile başlamalı)', 'error');
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('scan-button').disabled = false;
+        document.getElementById('scan-current-button').disabled = false;
+        return;
+    }
+    
     // Show spinner
     document.getElementById('spinner').style.display = 'block';
     document.getElementById('scan-button').disabled = true;
@@ -139,6 +150,7 @@ function scanUrl(url) {
     // Check if URL is in history and less than 24h old
     const cachedResult = checkUrlInHistory(url);
     if (cachedResult) {
+        console.log('URL geçmişte bulundu, son 24 saat içinde taranmış');
         showResult(cachedResult);
         return;
     }
@@ -155,6 +167,8 @@ function scanUrl(url) {
         selectedThreats.push(...threatTypes);
     }
     
+    console.log('Tehdit türleri:', selectedThreats);
+    
     // Prepare request payload
     const payload = {
         client: {
@@ -169,15 +183,22 @@ function scanUrl(url) {
         }
     };
     
+    // Show debug info
+    console.log('API anahtarı:', apiKey);
+    console.log('Gönderilen veri:', JSON.stringify(payload));
+    
     // Make API request
     fetch(`https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${apiKey}`, {
         method: 'POST',
         body: JSON.stringify(payload),
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        // Set timeout to 10 seconds
+        signal: AbortSignal.timeout(10000)
     })
     .then(response => {
+        console.log('API yanıt durumu:', response.status);
         if (!response.ok) {
             throw new Error(`API hatası: ${response.status}`);
         }
@@ -214,7 +235,17 @@ function scanUrl(url) {
     })
     .catch(error => {
         console.error('Error checking URL:', error);
-        showToast('Hata', `URL kontrol edilemedi: ${error.message}`, 'error');
+        
+        // Check if it's a timeout error
+        if (error.name === 'TimeoutError' || error.name === 'AbortError') {
+            showToast('Zaman Aşımı', 'URL taraması zaman aşımına uğradı. API anahtarınızı kontrol edin veya tekrar deneyin.', 'error');
+        } else if (error.message.includes('API')) {
+            showToast('API Hatası', 'Google Safe Browsing API hatası: API anahtarınızı kontrol edin.', 'error');
+        } else {
+            showToast('Hata', `URL kontrol edilemedi: ${error.message}`, 'error');
+        }
+        
+        console.log('API hatası detayı:', error);
         
         // Hide spinner
         document.getElementById('spinner').style.display = 'none';
@@ -507,6 +538,19 @@ function saveSettings() {
     // Get values
     apiKey = document.getElementById('api-key').value.trim();
     
+    console.log('Yeni API anahtarı kaydediliyor:', apiKey ? 'API anahtarı girildi' : 'API anahtarı boş');
+    
+    // API key validation
+    if (!apiKey) {
+        showToast('API Anahtarı Eksik', 'Lütfen bir Google Safe Browsing API anahtarı girin.', 'error');
+        return;
+    } 
+    
+    if (!apiKey.startsWith('AIza')) {
+        console.log('API anahtarı formatı uygun değil, ancak yine de kaydediliyor');
+        showToast('API Anahtarı Uyarısı', 'API anahtarı formatı standart değil. Yine de kaydedildi.', 'warning');
+    }
+    
     // Threat types
     const malware = document.getElementById('check-malware').checked;
     const phishing = document.getElementById('check-phishing').checked;
@@ -530,10 +574,23 @@ function saveSettings() {
 
 // Load settings
 function loadSettings() {
-    chrome.storage.local.get(['apiKey', 'threatSettings'], function(data) {
+    console.log('Ayarlar yükleniyor...');
+    chrome.storage.local.get(['apiKey', 'threatSettings', 'isFirstRun'], function(data) {
         if (data.apiKey) {
             apiKey = data.apiKey;
             document.getElementById('api-key').value = apiKey;
+            console.log('API anahtarı bulundu:', apiKey.substring(0, 4) + '...');
+        } else {
+            console.log('API anahtarı bulunamadı, lütfen ayarlardan ekleyin');
+            // Show settings view on first run
+            if (data.isFirstRun !== false) {
+                console.log('İlk çalıştırma tespit edildi, ayarlar sayfası gösteriliyor');
+                showToast('Hoş Geldiniz', 'ViorsLinkScan\'i kullanmak için lütfen API anahtarınızı ayarlayın.', 'info');
+                showView('settings-view');
+                
+                // Update first run status
+                chrome.storage.local.set({isFirstRun: false});
+            }
         }
         
         if (data.threatSettings) {
@@ -541,6 +598,7 @@ function loadSettings() {
             document.getElementById('check-phishing').checked = data.threatSettings.phishing !== false;
             document.getElementById('check-unwanted').checked = data.threatSettings.unwanted !== false;
             document.getElementById('check-harmful').checked = data.threatSettings.harmful !== false;
+            console.log('Tehdit ayarları yüklendi');
         }
     });
 }
@@ -593,6 +651,13 @@ function showToast(title, message, type = 'success') {
         titleEl.previousElementSibling.className = 'fas fa-exclamation-circle text-danger me-2';
     } else {
         titleEl.previousElementSibling.className = 'fas fa-check-circle text-success me-2';
+    }
+    
+    // Set warning style
+    if (type === 'warning') {
+        titleEl.previousElementSibling.className = 'fas fa-exclamation-triangle text-warning me-2';
+    } else if (type === 'info') {
+        titleEl.previousElementSibling.className = 'fas fa-info-circle text-info me-2';
     }
     
     // Show toast
