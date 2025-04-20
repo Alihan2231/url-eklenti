@@ -520,8 +520,9 @@ function initHistoryChart(safeCount, unsafeCount) {
             datasets: [{
                 data: [safeCount, unsafeCount],
                 backgroundColor: ['#4CAF50', '#ef3340'],
-                borderColor: ['#43A047', '#d12130'],
-                borderWidth: 2
+                borderColor: ['#c1a255', '#c1a255'],
+                borderWidth: 2,
+                hoverOffset: 6
             }]
         },
         options: {
@@ -532,8 +533,8 @@ function initHistoryChart(safeCount, unsafeCount) {
                     position: 'bottom',
                     labels: {
                         font: {
-                            family: "'Poppins', sans-serif",
-                            size: 11,
+                            family: "'Montserrat', sans-serif",
+                            size: 10,
                             weight: 500
                         },
                         color: '#f5f5f5'
